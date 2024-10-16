@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+        th, td {
+            text-align: center;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 2px 2px 5px black;
+            transition: box-shadow 0.5s;
+        }
+        .remove-btn {
+            background-color: #ff4c4c;
+        }
+        .remove-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="cartBody">
+            <!-- Cart items will be inserted here -->
+        </tbody>
+    </table>
+    <h3>Total Bill: $<span id="totalBill">0.00</span></h3>
+
+    <button onclick="goBack()">Continue Shopping</button>
+
+    <script>
+        // Load the cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Function to display the cart on the page
+        function displayCart() {
+            const cartBody = document.getElementById('cartBody');
+            let cartRows = '';
+            let totalBill = 0;
+
+            if (cart.length === 0) {
+                cartRows = '<tr><td colspan="6">Your cart is empty!</td></tr>';
+            } else {
+                cart.forEach((item, index) => {
+                    const itemTotal = (item.productPrice * item.quantity).toFixed(2);
+                    totalBill += parseFloat(itemTotal);
+
+                    cartRows += `
+                        <tr>
+                            <td>${item.productTitle}</td>
+                            <td><img src="${item.productImage}" alt="${item.productTitle}" width="50"></td>
+                            <td>${item.quantity}</td>
+                            <td>$${item.productPrice}</td>
+                            <td>$${itemTotal}</td>
+                            <td><button class="remove-btn" onclick="removeFromCart(${index})">Remove</button></td>
+                        </tr>`;
+                });
+            }
+
+            cartBody.innerHTML = cartRows;
+            document.getElementById('totalBill').textContent = totalBill.toFixed(2);
+        }
+
+        // Function to remove an item from the cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);  // Remove item from cart array
+            localStorage.setItem('cart', JSON.stringify(cart));  // Update localStorage
+            displayCart();  // Refresh the cart display
+        }
+
+        // Function to go back to the product page
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Display the cart when the page loads
+        displayCart();
+    </script>
+</body>
+</html>
